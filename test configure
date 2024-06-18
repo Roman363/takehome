@@ -1,0 +1,23 @@
+#!/bin/sh
+
+#This configure file was made in order to set the endpoint of the snap plugin and remove the need of the user to manually set it.
+#Still a work in progress, would like more feedback on how to improve it.
+
+# Check if SNAP_DATA is set
+if [ -z "$SNAP_DATA" ]; then
+    echo "SNAP_DATA environment variable is not set"
+    exit 1
+fi
+
+# Get the endpoint from snapctl
+ENDPOINT="$(snapctl get endpoint)"
+
+if [ -z "$ENDPOINT" ]; then
+    echo "ENDPOINT variable is empty"
+else
+    # Ensure the SNAP_DATA directory exists
+    mkdir -p "$SNAP_DATA"
+    # Write the endpoint to the config.toml file
+    echo "endpoint = \"$ENDPOINT\"" > "$SNAP_DATA/config.toml"
+    echo "Config file created at $SNAP_DATA/config.toml with endpoint: $ENDPOINT"
+fi
